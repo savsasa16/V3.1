@@ -38,13 +38,6 @@ def get_db():
         g.db = database.get_db_connection()
     return g.db
 
-@app.cli.command('init-db')
-def init_db_command():
-    """Clear existing data and create new tables."""
-    print("Initializing database via CLI command...")
-    setup_database()
-    print("Database initialized via CLI command.")
-
 @app.teardown_appcontext
 def close_db(e=None):
     db = g.pop('db', None)

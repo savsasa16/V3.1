@@ -1,6 +1,4 @@
-# ระบุเวอร์ชัน Python ที่ Render ควรใช้
-# Python 3.11 เป็นเวอร์ชันที่แนะนำสำหรับ Render เนื่องจากมีความเข้ากันได้ดีกับ Library หลายตัว
-python_version == "3.11.*"
+
 
 # WSGI Server
 gunicorn==22.0.0

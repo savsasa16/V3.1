@@ -43,7 +43,7 @@ multidict==6.1.0
 multiprocess==0.70.16
 networkx==3.4.2
 numba==0.60.0
-numpy==1.21.5
+numpy==2.2.6
 onnxruntime==1.20.1
 onnxruntime-gpu==1.20.1
 opencv-python==4.11.0.86

@@ -1,0 +1,19 @@
+# Python virtual environment
+venv/
+env/
+
+# Database files (for SQLite)
+*.db
+*.sqlite3
+inventory.db # เพิ่มเฉพาะไฟล์ฐานข้อมูลของคุณ
+
+# IDE specific files
+.idea/
+.vscode/
+
+# Python compiled files
+__pycache__/
+*.pyc
+
+# Windows specific files
+*.lnk # เพื่อไม่รวม python.lnk

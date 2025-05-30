@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}นำเข้า / ส่งออก Excel{% endblock %}
+
+{% block content %}
+<h2>นำเข้า / ส่งออก ข้อมูลสินค้า</h2>
+
+<div class="tabs">
+    <button class="tab-button active" data-tab="tires_excel">ยาง (Excel)</button>
+    <button class="tab-button" data-tab="wheels_excel">แม็ก (Excel)</button>
+</div>
+
+<div id="tires_excel" class="tab-content {{ 'active' if active_tab == 'tires_excel' }}">
+    <h3>นำเข้า / ส่งออก ข้อมูลยาง</h3>
+    <div class="form-section">
+        <h4>ส่งออกข้อมูลยางปัจจุบัน</h4>
+        <p>คลิกปุ่มด้านล่างเพื่อดาวน์โหลดข้อมูลสต็อกยางทั้งหมดในรูปแบบ Excel.</p>
+        <a href="{{ url_for('export_tires_action') }}" class="btn btn-primary"><i class="fas fa-file-export"></i> ส่งออกเป็น Excel</a>
+    </div>
+
+    <div class="form-section" style="margin-top: 30px;">
+        <h4>นำเข้าข้อมูลยาง (อัปเดต/เพิ่ม)</h4>
+        <p>เลือกไฟล์ Excel (.xlsx หรือ .xls) ที่มีข้อมูลยาง. ระบบจะอัปเดตข้อมูลยางเดิมที่มีอยู่และเพิ่มยางใหม่.</p>
+        <form action="{{ url_for('import_tires_action') }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="tire_file">เลือกไฟล์ Excel สำหรับยาง:</label>
+                <input type="file" name="file" id="tire_file" accept=".xlsx, .xls" required>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-file-import"></i> นำเข้าข้อมูล</button>
+        </form>
+    </div>
+</div>
+
+<div id="wheels_excel" class="tab-content {{ 'active' if active_tab == 'wheels_excel' }}">
+    <h3>นำเข้า / ส่งออก ข้อมูลแม็ก</h3>
+    <div class="form-section">
+        <h4>ส่งออกข้อมูลแม็กปัจจุบัน</h4>
+        <p>คลิกปุ่มด้านล่างเพื่อดาวน์โหลดข้อมูลสต็อกแม็กทั้งหมดในรูปแบบ Excel.</p>
+        <a href="{{ url_for('export_wheels_action') }}" class="btn btn-primary"><i class="fas fa-file-export"></i> ส่งออกเป็น Excel</a>
+    </div>
+
+    <div class="form-section" style="margin-top: 30px;">
+        <h4>นำเข้าข้อมูลแม็ก (อัปเดต/เพิ่ม)</h4>
+        <p>เลือกไฟล์ Excel (.xlsx หรือ .xls) ที่มีข้อมูลแม็ก. ระบบจะอัปเดตข้อมูลแม็กเดิมที่มีอยู่และเพิ่มแม็กใหม่.</p>
+        <form action="{{ url_for('import_wheels_action') }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="wheel_file">เลือกไฟล์ Excel สำหรับแม็ก:</label>
+                <input type="file" name="file" id="wheel_file" accept=".xlsx, .xls" required>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fas fa-file-import"></i> นำเข้าข้อมูล</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function switchTab(tabId) {
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                }
+            });
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.dataset.tab === tabId) {
+                    button.classList.add('active');
+                }
+            });
+            history.pushState(null, '', `?tab=${tabId}`);
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                switchTab(tabId);
+            });
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTabFromUrl = urlParams.get('tab');
+        const flaskActiveTab = "{{ active_tab }}"; 
+
+        if (flaskActiveTab && flaskActiveTab !== 'None') { 
+            switchTab(flaskActiveTab);
+        } else if (activeTabFromUrl) {
+            switchTab(activeTabFromUrl);
+        } else {
+            switchTab('tires_excel'); // Default tab
+        }
+    });
+</script>
+{% endblock %}

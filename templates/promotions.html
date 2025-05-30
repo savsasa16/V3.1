@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}จัดการโปรโมชัน{% endblock %}
+
+{% block content %}
+<h2>จัดการโปรโมชัน</h2>
+
+<div class="form-section">
+    <a href="{{ url_for('add_promotion') }}" class="btn btn-success"><i class="fas fa-plus"></i> เพิ่มโปรโมชันใหม่</a>
+</div>
+
+{% if promotions %}
+    <div class="table-responsive" style="margin-top: 20px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ชื่อโปรโมชัน</th>
+                    <th>ประเภท</th>
+                    <th>Value 1</th>
+                    <th>Value 2</th>
+                    <th>ใช้งานอยู่</th>
+                    <th>สร้างเมื่อ</th>
+                    <th>การดำเนินการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for promo in promotions %}
+                    <tr>
+                        <td>{{ promo.id }}</td>
+                        <td>{{ promo.name }}</td>
+                        <td>{{ promo.type }}</td>
+                        <td>{{ promo.value1 | th_num }}</td> {# ใช้ th_num filter #}
+                        <td>{{ promo.value2 | th_num if promo.value2 is not none else '-' }}</td> {# ใช้ th_num filter #}
+                        <td>
+                            {% if promo.is_active == 1 %}
+                                <i class="fas fa-check-circle text-success" title="ใช้งาน"></i>
+                            {% else %}
+                                <i class="fas fa-times-circle text-danger" title="ไม่ใช้งาน"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ promo.created_at.split('T')[0] }}</td> 
+                        <td class="action-buttons">
+                            <a href="{{ url_for('edit_promotion', promo_id=promo.id) }}" class="btn btn-primary btn-sm" title="แก้ไข"><i class="fas fa-edit"></i></a>
+                            <form class="delete-form" action="{{ url_for('delete_promotion', promo_id=promo.id) }}" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" title="ลบ" data-quantity="0">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="no-data">ยังไม่มีโปรโมชันในระบบ. <a href="{{ url_for('add_promotion') }}">เพิ่มโปรโมชันใหม่</a></p>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteForms = document.querySelectorAll('.delete-form'); 
+
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบโปรโมชันนี้? สินค้าที่ใช้โปรโมชันนี้จะถูกตั้งค่าโปรโมชันเป็น "ไม่มี"')) {
+                    event.preventDefault(); 
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}สต็อกสินค้า{% endblock %}
+
+{% block content %}
+<h2>ภาพรวมสต็อกสินค้า</h2>
+
+<div class="tabs">
+    <button class="tab-button active" data-tab="tires">สต็อกยาง</button>
+    <button class="tab-button" data-tab="wheels">สต็อกแม็ก</button>
+</div>
+
+<div id="tires" class="tab-content {{ 'active' if active_tab == 'tires' }}">
+    <h3>สต็อกยางปัจจุบัน</h3>
+    <div class="filter-section form-section">
+        <form method="GET" action="{{ url_for('index') }}" class="form-row">
+            <input type="hidden" name="tab" value="tires">
+            <div class="form-group half-width">
+                <label for="tire_query">ค้นหายาง (ยี่ห้อ, รุ่น, เบอร์):</label>
+                <input type="text" id="tire_query" name="tire_query" value="{{ tire_query }}">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="tire_brand_filter">กรองตามยี่ห้อ:</label>
+                <select id="tire_brand_filter" name="tire_brand_filter">
+                    <option value="all">-- ทั้งหมด --</option>
+                    {% for brand in available_tire_brands %}
+                        <option value="{{ brand }}" {% if tire_selected_brand == brand %}selected{% endif %}>{{ brand }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group quarter-width">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> ค้นหา/กรอง</button>
+            </div>
+        </form>
+    </div>
+
+    {% if tires_by_brand %}
+        {% for brand in sorted_tire_brands %}
+            <h4>{{ brand }}</h4>
+            <div class="table-responsive">
+                <table id="tires-table"> 
+                    <thead>
+                        <tr>
+                            <th>รุ่น</th>
+                            <th>เบอร์ยาง</th>
+                            <th>สต็อก</th>
+                            <th>ราคาต่อเส้น</th> 
+                            <th>โปรโมชัน</th> 
+                            <th>ราคา 4 เส้น</th> 
+                            <th>ปีผลิต</th>
+                            <th>การดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tire in tires_by_brand[brand] %}
+                            <tr>
+                                <td>{{ tire.model }}</td>
+                                <td>{{ tire.size }}</td>
+                                <td><span class="{% if tire.quantity <= 5 %}text-danger{% elif tire.quantity <= 10 %}text-warning{% endif %}">{{ tire.quantity }}</span></td>
+                                <td>{{ tire.price_per_item | th_num }}</td> {# ใช้ th_num filter #}
+                                <td>
+                                    {% if tire.promotion_id and tire.promo_is_active == 1 %} 
+                                        <span class="promo-badge" title="{{ tire.promo_name }}: {{ tire.display_promo_description_text }}">{{ tire.promo_name }}</span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {# Logic for displaying price for 4 items with color #}
+                                    {% if tire.display_price_for_4 is not none %}
+                                        {# ถ้ามีราคาโปรโมชันที่คำนวณแล้วและไม่เท่ากับราคาปกติ (แสดงว่าโปรโมชันมีผล) #}
+                                        {% if tire.display_promo_price_per_item is not none and tire.display_promo_price_per_item != tire.price_per_item %}
+                                            <span class="price-for-4 promo-price">{{ tire.display_price_for_4 | th_num }}</span>
+                                        {% else %}
+                                            <span class="price-for-4">{{ tire.display_price_for_4 | th_num }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>{{ tire.year_of_manufacture }}</td> {# แสดงผล year_of_manufacture ตรงๆ #}
+                                <td class="action-buttons">
+                                    <a href="{{ url_for('edit_tire', tire_id=tire.id) }}" class="btn btn-primary btn-sm" title="แก้ไข"><i class="fas fa-edit"></i></a>
+                                    <form class="delete-form" action="{{ url_for('delete_tire', tire_id=tire.id) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="ลบ" data-quantity="{{ tire.quantity }}"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-data">ไม่พบข้อมูลยาง</p>
+    {% endif %}
+</div>
+
+<div id="wheels" class="tab-content {{ 'active' if active_tab == 'wheels' }}">
+    <h3>สต็อกแม็กปัจจุบัน</h3>
+    <div class="filter-section form-section">
+        <form method="GET" action="{{ url_for('index') }}" class="form-row">
+            <input type="hidden" name="tab" value="wheels">
+            <div class="form-group half-width">
+                <label for="wheel_query">ค้นหาแม็ก (ยี่ห้อ, ลาย, ขอบ, รู):</label>
+                <input type="text" id="wheel_query" name="wheel_query" value="{{ wheel_query }}">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="wheel_brand_filter">กรองตามยี่ห้อ:</label>
+                <select id="wheel_brand_filter" name="wheel_brand_filter">
+                    <option value="all">-- ทั้งหมด --</option>
+                    {% for brand in available_wheel_brands %}
+                        <option value="{{ brand }}" {% if wheel_selected_brand == brand %}selected{% endif %}>{{ brand }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group quarter-width">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> ค้นหา/กรอง</button>
+            </div>
+        </form>
+    </div>
+
+    {% if wheels_by_brand %}
+        {% for brand in sorted_wheel_brands %}
+            <h4>{{ brand }}</h4>
+            <div class="table-responsive">
+                <table id="wheels-table"> 
+                    <thead>
+                        <tr>
+                            <th>ลาย</th>
+                            <th>ขนาด (ขอบ x กว้าง)</th>
+                            <th>รู ET</th>
+                            <th>สี</th>
+                            <th>สต็อก</th>
+                            <th>ทุน</th>
+                            <th>ราคาปลีก</th>
+                            <th>รูปภาพ</th>
+                            <th>การดำเนินการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for wheel in wheels_by_brand[brand] %}
+                            <tr>
+                                <td>{{ wheel.model }}</td>
+                                <td>{{ "%.1f"|format(wheel.diameter) }}x{{ "%.1f"|format(wheel.width) }}</td>
+                                <td>{{ wheel.pcd }} {{ wheel.et if wheel.et is not none else '-' }}</td>
+                                <td>{{ wheel.color if wheel.color else '-' }}</td>
+                                <td><span class="{% if wheel.quantity <= 2 %}text-danger{% elif wheel.quantity <= 4 %}text-warning{% endif %}">{{ wheel.quantity }}</span></td>
+                                <td>{{ wheel.cost | th_num if wheel.cost is not none else '-' }}</td> {# ใช้ th_num filter #}
+                                <td>{{ wheel.retail_price | th_num }}</td> {# ใช้ th_num filter #}
+                                <td>
+                                    {% if wheel.image_filename %}
+                                        <img src="{{ url_for('static', filename='images/wheels/' + wheel.image_filename) }}" alt="รูปภาพ {{ wheel.model }}" style="width: 50px; height: auto; border-radius: 4px;">
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="action-buttons">
+                                    <a href="{{ url_for('wheel_detail', wheel_id=wheel.id) }}" class="btn btn-success btn-sm" title="ดูรายละเอียด"><i class="fas fa-info-circle"></i></a>
+                                    <a href="{{ url_for('edit_wheel', wheel_id=wheel.id) }}" class="btn btn-primary btn-sm" title="แก้ไข"><i class="fas fa-edit"></i></a>
+                                    <form class="delete-form" action="{{ url_for('delete_wheel', wheel_id=wheel.id) }}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="ลบ" data-quantity="{{ wheel.quantity }}"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-data">ไม่พบข้อมูลแม็ก</p>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const deleteForms = document.querySelectorAll('.delete-form'); 
+
+        function switchTab(tabId) {
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                }
+            });
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.dataset.tab === tabId) {
+                    button.classList.add('active');
+                }
+            });
+            history.pushState(null, '', `?tab=${tabId}`);
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                switchTab(tabId);
+            });
+        });
+
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                const submitButton = event.submitter; 
+                const quantity = parseInt(submitButton.dataset.quantity);
+
+                if (quantity > 0) {
+                    event.preventDefault(); 
+                    alert('ไม่สามารถลบสินค้าได้ เนื่องจากยังมีสต็อกเหลืออยู่. กรุณาปรับสต็อกให้เป็น 0 ก่อน.');
+                } else {
+                    if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้อย่างถาวร?')) {
+                        event.preventDefault(); 
+                    }
+                }
+            });
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTabFromUrl = urlParams.get('tab');
+        const flaskActiveTab = "{{ active_tab }}"; 
+
+        if (flaskActiveTab && flaskActiveTab !== 'None') { 
+            switchTab(flaskActiveTab);
+        } else if (activeTabFromUrl) {
+            switchTab(activeTabFromUrl);
+        } else {
+            switchTab('tires'); 
+        }
+    });
+</script>
+{% endblock %}

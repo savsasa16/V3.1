@@ -1,0 +1,211 @@
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+                <li class="flash-message {{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>รับเข้า / จ่ายออกสต็อก</h2>
+
+<div class="tabs">
+    <button class="tab-button active" data-tab="tire_movements">สต็อกยาง</button>
+    <button class="tab-button" data-tab="wheel_movements">สต็อกแม็ก</button>
+</div>
+
+<div id="tire_movements" class="tab-content {{ 'active' if active_tab == 'tire_movements' }}">
+    <h3>จัดการสต็อกยาง</h3>
+    <div class="form-section">
+        <form action="{{ url_for('stock_movement') }}" method="post">
+            <input type="hidden" name="submit_type" value="tire_movement">
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="tire_id">เลือกยาง (ID - ยี่ห้อ รุ่น เบอร์ยาง):</label>
+                    <select id="tire_id" name="tire_id" required>
+                        <option value="">-- เลือกยาง --</option>
+                        {% for tire in tires %}
+                            <option value="{{ tire.id }}">{{ tire.id }} - {{ tire.brand }} {{ tire.model }} {{ tire.size }} (คงเหลือ: {{ tire.quantity }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group quarter-width">
+                    <label for="type">ประเภท:</label>
+                    <select id="type" name="type" required>
+                        <option value="IN">รับเข้า</option>
+                        <option value="OUT">จ่ายออก</option>
+                    </select>
+                </div>
+                <div class="form-group quarter-width">
+                    <label for="quantity">จำนวน (เส้น):</label>
+                    <input type="number" id="quantity" name="quantity" min="1" required>
+    
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="notes">หมายเหตุ (ถ้ามี):</label>
+                <input type="text" id="notes" name="notes">
+            </div>
+            <button type="submit" class="btn btn-primary">บันทึกการเคลื่อนไหว</button>
+        </form>
+    </div>
+
+    <h3>ประวัติการเคลื่อนไหวล่าสุดของยาง</h3>
+    {% if tire_movements %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>เวลา</th>
+                        <th>ID ยาง</th>
+                        <th>ข้อมูลยาง</th>
+                        <th>ประเภท</th>
+                        <th>จำนวน</th>
+                        <th>คงเหลือ</th>
+                        <th>หมายเหตุ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movement in tire_movements %}
+                        <tr>
+                            <td>{{ movement.timestamp }}</td>
+                            <td>{{ movement.tire_id }}</td>
+                            <td>{{ movement.brand }} {{ movement.model }} {{ movement.size }}</td> {# ดึงข้อมูลจาก JOIN ใน database.py #}
+                            <td>{{ 'รับเข้า' if movement.type == 'IN' else 'จ่ายออก' }}</td>
+                            <td>{{ movement.quantity_change }}</td>
+                            <td>{{ movement.remaining_quantity }}</td>
+                            <td>{{ movement.notes if movement.notes else '-' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>ยังไม่มีประวัติการเคลื่อนไหวของยาง</p>
+    {% endif %}
+</div>
+
+<div id="wheel_movements" class="tab-content {{ 'active' if active_tab == 'wheel_movements' }}">
+    <h3>จัดการสต็อกแม็ก</h3>
+    <div class="form-section">
+        <form action="{{ url_for('stock_movement') }}" method="post">
+            <input type="hidden" name="submit_type" value="wheel_movement">
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="wheel_id">เลือกแม็ก (ID - ยี่ห้อ ลาย ขอบ):</label>
+                    <select id="wheel_id" name="wheel_id" required>
+                        <option value="">-- เลือกแม็ก --</option>
+                        {% for wheel in wheels %}
+                            <option value="{{ wheel.id }}">{{ wheel.id }} - {{ wheel.brand }} {{ wheel.model }} {{ "%.1f"|format(wheel.diameter) }} นิ้ว (คงเหลือ: {{ wheel.quantity }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group quarter-width">
+                    <label for="type">ประเภท:</label>
+                    <select id="type" name="type" required>
+                        <option value="IN">รับเข้า</option>
+                        <option value="OUT">จ่ายออก</option>
+                    </select>
+                </div>
+                <div class="form-group quarter-width">
+                    <label for="quantity">จำนวน (วง):</label>
+                    <input type="number" id="quantity" name="quantity" min="1" required>
+    
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="notes">หมายเหตุ (ถ้ามี):</label>
+                <input type="text" id="notes" name="notes">
+            </div>
+            <button type="submit" class="btn btn-primary">บันทึกการเคลื่อนไหว</button>
+        </form>
+    </div>
+
+    <h3>ประวัติการเคลื่อนไหวล่าสุดของแม็ก</h3>
+    {% if wheel_movements %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>เวลา</th>
+                        <th>ID แม็ก</th>
+                        <th>ข้อมูลแม็ก</th>
+                        <th>ประเภท</th>
+                        <th>จำนวน</th>
+                        <th>คงเหลือ</th>
+                        <th>หมายเหตุ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for movement in wheel_movements %}
+                        <tr>
+                            <td>{{ movement.timestamp }}</td>
+                            <td>{{ movement.wheel_id }}</td>
+                            <td>{{ movement.brand }} {{ movement.model }} {{ "%.1f"|format(movement.diameter) }} นิ้ว</td> {# ดึงข้อมูลจาก JOIN ใน database.py #}
+                            <td>{{ 'รับเข้า' if movement.type == 'IN' else 'จ่ายออก' }}</td>
+                            <td>{{ movement.quantity_change }}</td>
+                            <td>{{ movement.remaining_quantity }}</td>
+                            <td>{{ movement.notes if movement.notes else '-' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>ยังไม่มีประวัติการเคลื่อนไหวของแม็ก</p>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        function switchTab(tabId) {
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                }
+            });
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.dataset.tab === tabId) {
+                    button.classList.add('active');
+                }
+            });
+            // อัปเดต URL เพื่อให้จดจำแท็บ
+            history.pushState(null, '', `?tab=${tabId}`);
+        }
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.dataset.tab;
+                switchTab(tabId);
+            });
+        });
+
+        // ตรวจสอบ URL เพื่อเปิดแท็บที่ถูกต้องเมื่อโหลดหน้าเว็บ
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTabFromUrl = urlParams.get('tab');
+        const flaskActiveTab = "{{ active_tab }}"; // ดึง active_tab จาก Flask
+
+        if (flaskActiveTab && flaskActiveTab !== 'None') { // ให้ความสำคัญกับค่าจาก Flask ก่อน
+            switchTab(flaskActiveTab);
+        } else if (activeTabFromUrl) {
+            switchTab(activeTabFromUrl);
+        } else {
+            switchTab('tire_movements'); // หากไม่มี tab ใน URL ให้เปิดแท็บ "tire_movements" เป็นค่าเริ่มต้น
+        }
+
+        // เพิ่มการตรวจสอบ active_tab จาก Flask เพื่อให้แสดงผลถูกต้องเมื่อเกิด error
+        {% if active_tab %}
+        switchTab('{{ active_tab }}');
+        {% endif %}
+    });
+</script>
+{% endblock %}

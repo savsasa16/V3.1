@@ -1,0 +1,513 @@
+/* --- Global Styles --- */
+:root {
+    --primary-color: #3498db; /* Blue */
+    --primary-dark: #2980b9;
+    --secondary-color: #2ecc71; /* Green */
+    --accent-color: #f39c12; /* Orange */
+    --text-dark: #2c3e50;
+    --text-light: #555;
+    --bg-light: #f9fbfd;
+    --bg-white: #ffffff;
+    --border-color: #e0e0e0;
+    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Prompt', sans-serif, 'Segoe UI', Tahoma, Geneva, Verdana; /* ใช้ Prompt ถ้ามี, หรือ fallback */
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    line-height: 1.7;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: var(--bg-white);
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    transition: all 0.3s ease-in-out;
+}
+
+h1, h2, h3, h4 {
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h2 {
+    font-size: 2.2em;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 30px;
+}
+
+h3 {
+    font-size: 1.8em;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+/* --- Navigation Bar (If applicable) --- */
+.navbar {
+    background-color: var(--text-dark);
+    padding: 15px 30px;
+    box-shadow: var(--shadow-medium);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+/* --- Flash Messages --- */
+.flash-messages {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.flash-message {
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: white;
+    box-shadow: var(--shadow-light);
+    display: flex;
+    align-items: center;
+}
+
+.flash-message::before {
+    content: 'i'; /* Placeholder icon */
+    font-family: 'Font Awesome 5 Free'; /* ถ้ามี Font Awesome */
+    font-weight: 900;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.flash-messages .success {
+    background-color: #2ecc71; /* Green */
+}
+.flash-messages .success::before { content: '\f00c'; } /* check-circle */
+
+
+.flash-messages .error,
+.flash-messages .danger {
+    background-color: #e74c3c; /* Red */
+}
+.flash-messages .error::before,
+.flash-messages .danger::before { content: '\f06a'; } /* exclamation-circle */
+
+
+.flash-messages .warning {
+    background-color: #f39c12; /* Orange */
+    color: var(--text-dark);
+}
+.flash-messages .warning::before { content: '\f071'; } /* exclamation-triangle */
+
+
+.flash-messages .info {
+    background-color: #3498db; /* Blue */
+}
+.flash-messages .info::before { content: '\f05a'; } /* info-circle */
+
+
+/* --- Tabs Styling --- */
+.tabs {
+    display: flex;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+    overflow-x: auto; /* Allow horizontal scroll for many tabs */
+    -webkit-overflow-scrolling: touch;
+}
+
+.tab-button {
+    background-color: var(--bg-white);
+    border: none;
+    padding: 15px 25px;
+    cursor: pointer;
+    font-size: 1.15em;
+    font-weight: 600;
+    color: var(--text-light);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    transition: all 0.3s ease;
+    outline: none;
+    flex-shrink: 0; /* Prevent shrinking when many tabs */
+}
+
+.tab-button:hover {
+    background-color: #eaf2f8;
+    color: var(--primary-color);
+}
+
+.tab-button.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-bottom: 2px solid var(--primary-color);
+    box-shadow: var(--shadow-light);
+    transform: translateY(-2px);
+}
+
+.tab-content {
+    display: none;
+    padding: 25px 0;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* --- Form Styles --- */
+.form-section {
+    background-color: var(--bg-white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+    margin-bottom: 40px;
+    border: 1px solid var(--border-color);
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px; /* เพิ่มช่องว่างระหว่างกลุ่มฟอร์ม */
+    margin-bottom: 20px;
+    align-items: flex-end; /* จัดให้ label และ input อยู่ในระดับเดียวกัน */
+}
+
+.form-group {
+    flex: 1;
+    min-width: 250px; /* เพิ่มขั้นต่ำให้กว้างขึ้น */
+    margin-bottom: 15px; /* Space between rows of form groups */
+}
+
+.form-group.half-width {
+    flex-basis: calc(50% - 12.5px); /* ปรับตาม gap */
+}
+
+.form-group.quarter-width {
+    flex-basis: calc(25% - 18.75px); /* ปรับตาม gap */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95em;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="file"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1em;
+    color: var(--text-dark);
+    background-color: #fcfcfc;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+input[type="file"]:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-flex; /* Use flex for icon alignment */
+    align-items: center;
+    justify-content: center;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    min-width: 120px; /* Minimum width for consistency */
+}
+
+.btn i {
+    margin-right: 8px; /* Space between icon and text */
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-danger {
+    background-color: #e74c3c; /* Red */
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-success {
+    background-color: var(--secondary-color); /* Green */
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-outline:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+
+/* --- Table Styles --- */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 30px;
+    box-shadow: var(--shadow-light);
+    border-radius: 10px;
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate; /* เพื่อให้ border-radius ของ table ทำงานได้ */
+    border-spacing: 0; /* เพื่อลบช่องว่างระหว่างเซลล์ */
+}
+
+th, td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background-color: #f8f8f8;
+    color: var(--text-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.95em;
+    position: sticky; /* ทำให้หัวตารางติดอยู่เมื่อเลื่อน */
+    top: 0;
+    z-index: 1;
+}
+
+tr:nth-child(even) {
+    background-color: #fdfdfd;
+}
+
+tr:hover {
+    background-color: #f0f8ff; /* Light blue on hover */
+}
+
+td .action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/* --- Links --- */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* --- Image styling for wheel details --- */
+.wheel-image {
+    max-width: 400px;
+    height: auto;
+    display: block;
+    margin: 0 auto 30px auto; /* Centered */
+    border-radius: 10px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+}
+
+/* --- No data message --- */
+p.no-data {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+    font-style: italic;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .container {
+        margin: 20px auto;
+        padding: 20px;
+    }
+    h1, h2 {
+        font-size: 1.8em;
+    }
+    h3 {
+        font-size: 1.5em;
+    }
+    .form-row {
+        gap: 15px;
+    }
+    .form-group.half-width {
+        flex-basis: calc(50% - 7.5px);
+    }
+    .form-group.quarter-width {
+        flex-basis: calc(33.33% - 10px); /* 3 columns on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+    .container {
+        margin: 15px;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    .navbar {
+        flex-direction: column;
+        padding: 10px 15px;
+    }
+    .navbar a {
+        padding: 6px 12px;
+        font-size: 0.9em;
+    }
+    .tabs {
+        flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+    }
+    .tab-button {
+        flex: 1 1 auto; /* Allow buttons to wrap and take available space */
+        font-size: 1em;
+        padding: 12px 15px;
+        margin-bottom: 5px; /* Add space when wrapping */
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 0; /* Remove gap when stacking vertically */
+    }
+    .form-group,
+    .form-group.half-width,
+    .form-group.quarter-width {
+        flex-basis: 100%;
+        min-width: unset; /* Remove min-width */
+        margin-bottom: 15px;
+    }
+    .form-section {
+        padding: 20px;
+    }
+    th, td {
+        padding: 10px 12px;
+        font-size: 0.85em;
+    }
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        min-width: unset;
+    }
+    .wheel-image {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.5em;
+    }
+    h3 {
+        font-size: 1.3em;
+    }
+    .flash-message {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+    .flash-message::before {
+        font-size: 1em;
+    }
+    .tab-button {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+    .form-section {
+        padding: 15px;
+    }
+    input[type="text"], input[type="number"], select, textarea {
+        padding: 10px;
+    }
+    th, td {
+        padding: 8px 10px;
+    }
+    /* Hide some columns on very small screens if necessary */
+    table thead th:nth-child(even),
+    table tbody td:nth-child(even) {
+        /* display: none; */ /* uncomment to hide specific columns */
+    }
+}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>แก้ไขข้อมูลแม็ก</h2>
+<div class="form-section">
+    <form action="{{ url_for('edit_wheel', wheel_id=wheel.id) }}" method="post" enctype="multipart/form-data">
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="brand">ยี่ห้อ: <span style="color:red;">*</span></label>
+                <input type="text" id="brand" name="brand" value="{{ wheel.brand }}" required>
+            </div>
+            <div class="form-group half-width">
+                <label for="model">ลาย: <span style="color:red;">*</span></label>
+                <input type="text" id="model" name="model" value="{{ wheel.model }}" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group third-width">
+                <label for="diameter">ขอบ (นิ้ว): <span style="color:red;">*</span></label>
+                <input type="number" id="diameter" name="diameter" value="{{ wheel.diameter }}" min="10" max="30" step="0.5" required>
+            </div>
+            <div class="form-group third-width">
+                <label for="pcd">รู (เช่น 4x100, 5x114.3): <span style="color:red;">*</span></label>
+                <input type="text" id="pcd" name="pcd" value="{{ wheel.pcd }}" required>
+            </div>
+            <div class="form-group third-width">
+                <label for="width">กว้าง (นิ้ว): <span style="color:red;">*</span></label>
+                <input type="number" id="width" name="width" value="{{ wheel.width }}" min="4" max="15" step="0.5" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group third-width">
+                <label for="et">ET (Offset) (ถ้ามี):</label>
+                <input type="number" id="et" name="et" value="{{ wheel.et if wheel.et is not none else '' }}">
+            </div>
+            <div class="form-group third-width">
+                <label for="color">สี (ถ้ามี):</label>
+                <input type="text" id="color" name="color" value="{{ wheel.color if wheel.color is not none else '' }}">
+            </div>
+            <div class="form-group third-width">
+                <label>จำนวนคงเหลือปัจจุบัน:</label>
+                <input type="text" value="{{ wheel.quantity }}" disabled>
+                <small>หากต้องการเปลี่ยนจำนวน ให้ไปที่เมนู "รับเข้า/จ่ายออกสต็อก"</small>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group quarter-width">
+                <label for="cost">ต้นทุน: <span style="color:red;">*</span></label>
+                <input type="number" id="cost" name="cost" step="0.01" value="{{ wheel.cost }}" min="0" required>
+            </div>
+            <div class="form-group quarter-width">
+                <label for="cost_online">ต้นทุน Online (ถ้ามี):</label>
+                <input type="number" id="cost_online" name="cost_online" step="0.01" value="{{ wheel.cost_online if wheel.cost_online is not none else '' }}" min="0">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="wholesale_price1">ราคาขายส่ง 1 (ถ้ามี):</label>
+                <input type="number" id="wholesale_price1" name="wholesale_price1" step="0.01" value="{{ wheel.wholesale_price1 if wheel.wholesale_price1 is not none else '' }}" min="0">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="wholesale_price2">ราคาขายส่ง 2 (ถ้ามี):</label>
+                <input type="number" id="wholesale_price2" name="wholesale_price2" step="0.01" value="{{ wheel.wholesale_price2 if wheel.wholesale_price2 is not none else '' }}" min="0">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="retail_price">ราคาขายปลีก: <span style="color:red;">*</span></label>
+                <input type="number" id="retail_price" name="retail_price" step="0.01" value="{{ wheel.retail_price }}" min="0.01" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="image_file">รูปภาพแม็ก (ถ้ามี):</label>
+            {% if wheel.image_filename %}
+                <img src="{{ url_for('static', filename='images/wheels/' + wheel.image_filename) }}" alt="รูปแม็กปัจจุบัน" class="edit-thumbnail">
+                <br>
+                <small>รูปภาพปัจจุบัน: {{ wheel.image_filename }}</small>
+            {% else %}
+                <p>ไม่มีรูปภาพสำหรับแม็กนี้</p>
+            {% endif %}
+            <input type="file" id="image_file" name="image_file" accept="image/png, image/jpeg, image/gif">
+            <small>เลือกไฟล์ใหม่เพื่อเปลี่ยนรูปภาพ หรือปล่อยว่างไว้เพื่อใช้รูปเดิม</small>
+        </div>
+        <button type="submit" class="btn btn-primary">บันทึกการแก้ไข</button>
+        <a href="{{ url_for('index', tab='wheels') }}" class="btn btn-secondary">ยกเลิก</a>
+    </form>
+</div>
+
+{% endblock %}

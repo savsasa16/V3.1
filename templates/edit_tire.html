@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}แก้ไขข้อมูลยาง{% endblock %}
+
+{% block content %}
+<h2>แก้ไขข้อมูลยาง: {{ tire.brand }} {{ tire.model }} {{ tire.size }}</h2>
+
+<div class="form-section">
+    <form action="{{ url_for('edit_tire', tire_id=tire.id) }}" method="post">
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="tire_brand">ยี่ห้อยาง <span class="required">*</span>:</label>
+                <input type="text" id="tire_brand" name="brand" required value="{{ tire.brand }}">
+            </div>
+            <div class="form-group half-width">
+                <label for="tire_model">รุ่นยาง <span class="required">*</span>:</label>
+                <input type="text" id="tire_model" name="model" required value="{{ tire.model }}">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="tire_size">เบอร์ยาง <span class="required">*</span>:</label>
+                <input type="text" id="tire_size" name="size" required value="{{ tire.size }}">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="tire_quantity">จำนวน (เส้น) <span class="required">*</span>:</label>
+                <input type="number" id="tire_quantity" name="quantity" min="0" value="{{ tire.quantity }}" readonly title="จำนวนสต็อกแก้ไขได้ที่หน้า 'รับเข้า/จ่ายออกสต็อก'">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="tire_year_of_manufacture">ปีผลิต:</label>
+                {# Changed to type="text", no min/max #}
+                <input type="text" id="tire_year_of_manufacture" name="year_of_manufacture" 
+                       value="{{ tire.year_of_manufacture if tire.year_of_manufacture is not none else '' }}"
+                       title="กรอกตัวเลขเท่านั้น เช่น 4825 สำหรับสัปดาห์ 48 ปี 25">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group quarter-width">
+                <label for="tire_cost_sc">ทุน SC:</label> 
+                <input type="number" id="tire_cost_sc" name="cost_sc" step="0.01" min="0" value="{{ tire.cost_sc if tire.cost_sc is not none else '' }}">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="tire_cost_dunlop">ทุน Dunlop:</label>
+                <input type="number" id="tire_cost_dunlop" name="cost_dunlop" step="0.01" min="0" value="{{ tire.cost_dunlop if tire.cost_dunlop is not none else '' }}">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="tire_cost_online">ทุน Online:</label>
+                <input type="number" id="tire_cost_online" name="cost_online" step="0.01" min="0" value="{{ tire.cost_online if tire.cost_online is not none else '' }}">
+            </div>
+            <div class="form-group quarter-width">
+                <label for="tire_price_per_item">ราคาต่อเส้น <span class="required">*</span>:</label> 
+                <input type="number" id="tire_price_per_item" name="price_per_item" step="0.01" min="0" required value="{{ tire.price_per_item }}"> 
+            </div>
+        </div>
+        {# --- Promotion Fields --- #}
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="promotion_id">โปรโมชันสำหรับยางนี้:</label>
+                <select id="promotion_id" name="promotion_id">
+                    <option value="none">-- ไม่มีโปรโมชัน --</option>
+                    {% for promo in all_promotions %}
+                        <option value="{{ promo.id }}" {% if tire.promotion_id == promo.id %}selected{% endif %}>
+                            {{ promo.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {# --- End Promotion Fields --- #}
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="tire_wholesale_price1">ราคาขายส่ง 1:</label>
+                <input type="number" id="tire_wholesale_price1" name="wholesale_price1" step="0.01" min="0" value="{{ tire.wholesale_price1 if tire.wholesale_price1 is not none else '' }}">
+            </div>
+            <div class="form-group half-width">
+                <label for="tire_wholesale_price2">ราคาขายส่ง 2:</label>
+                <input type="number" id="tire_wholesale_price2" name="wholesale_price2" step="0.01" min="0" value="{{ tire.wholesale_price2 if tire.wholesale_price2 is not none else '' }}">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> บันทึกการแก้ไข</button>
+        <a href="{{ url_for('index', tab='tires') }}" class="btn btn-outline" style="margin-left: 10px;"><i class="fas fa-arrow-left"></i> ยกเลิก</a>
+    </form>
+</div>
+
+<style>
+    .required {
+        color: var(--danger-color);
+        font-weight: normal;
+        margin-left: 2px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const yearInput = document.getElementById('tire_year_of_manufacture');
+
+        if (yearInput) {
+            // Function to format the year input
+            function formatYearInput() {
+                let value = this.value.trim();
+                // Ensure only digits are kept
+                value = value.replace(/\D/g, ''); 
+                this.value = value;
+            }
+
+            // Attach event listeners
+            yearInput.addEventListener('input', formatYearInput); // Format while typing
+            yearInput.addEventListener('blur', formatYearInput); // Format when leaving the field
+
+            // Initial formatting on page load (important for pre-filled forms)
+            formatYearInput.call(yearInput); // Call the function directly on the input element
+        }
+    });
+</script>
+{% endblock %}

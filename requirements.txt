@@ -76,12 +76,12 @@ scipy==1.14.1
 simple-websocket==1.1.0
 six==1.17.0
 SQLAlchemy==2.0.41
-sympy==1.13.1
+sympy==1.13.3
 tifffile==2024.12.12
 tokenizers==0.21.0
-torch==2.6.0+cu118
-torchaudio==2.6.0+cu118
-torchvision==0.21.0+cu118
+torch==2.7.0+cpu
+torchaudio==2.7.0+cpu
+torchvision==0.22.0+cpu
 tqdm==4.67.1
 transformers==4.48.3
 typing_extensions==4.12.2

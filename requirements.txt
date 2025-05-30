@@ -1,95 +1,68 @@
-accelerate==1.3.0
-aiohappyeyeballs==2.4.6
-aiohttp==3.11.12
-aiosignal==1.3.2
-async-timeout==5.0.1
-attrs==24.3.0
-bidict==0.23.1
-blinker==1.9.0
-certifi==2024.12.14
-charset-normalizer==3.4.0
-click==8.1.7
-colorama==0.4.6
-coloredlogs==15.0.1
-datasets==3.3.0
-diffusers==0.32.2
-dill==0.3.8
-et_xmlfile==2.0.0
-filelock==3.17.0
-Flask==2.2.3
-Flask-Cors==5.0.0
-Flask-SocketIO==5.5.1
-Flask-SQLAlchemy==2.5.1
-flatbuffers==24.3.25
-frozenlist==1.5.0
-fsspec==2024.12.0
-greenlet==3.2.2
-gunicorn==23.0.0
-h11==0.14.0
-huggingface-hub==0.28.1
-humanfriendly==10.0
-idna==3.10
-imageio==2.36.1
-importlib_metadata==8.6.1
-itsdangerous==2.2.0
-Jinja2==3.1.4
-jsonschema==4.23.0
-jsonschema-specifications==2024.10.1
-lazy_loader==0.4
-llvmlite==0.44.0
-MarkupSafe==3.0.2
-mpmath==1.3.0
-multidict==6.1.0
-multiprocess==0.70.16
-networkx==3.4.2
-numba==0.61.2
-numpy==2.2.6
-onnxruntime==1.20.1
-onnxruntime-gpu==1.20.1
-opencv-python==4.11.0.86
-opencv-python-headless==4.10.0.84
-openpyxl==3.1.5
-packaging==24.2
-pandas==1.5.3
-pillow==11.0.0
-platformdirs==4.3.6
-pooch==1.8.2
-propcache==0.2.1
-protobuf==5.29.2
-psutil==7.0.0
-pyarrow==19.0.0
-PyMatting==1.1.13
-pyreadline3==3.5.4
-python-dateutil==2.9.0.post0
-python-engineio==4.11.2
-python-socketio==5.12.1
-pytz==2025.2
-PyYAML==6.0.2
-referencing==0.35.1
-regex==2024.11.6
-rembg==2.0.61
-requests==2.32.3
-rpds-py==0.22.3
-safetensors==0.5.2
-scikit-image==0.25.0
-scipy==1.14.1
-simple-websocket==1.1.0
-six==1.17.0
-SQLAlchemy==2.0.41
-sympy==1.13.3
-tifffile==2024.12.12
-tokenizers==0.21.0
-torch==2.7.0+cpu
-torchaudio==2.7.0+cpu
-torchvision==0.22.0+cpu
-tqdm==4.67.1
-transformers==4.48.3
-typing_extensions==4.12.2
-tzdata==2025.1
-urllib3==2.2.3
-Werkzeug==2.2.3
-wsproto==1.2.0
-XlsxWriter==3.0.3
-xxhash==3.5.0
-yarl==1.18.3
-zipp==3.21.0
+# ระบุเวอร์ชัน Python ที่ Render ควรใช้
+# Python 3.11 เป็นเวอร์ชันที่แนะนำสำหรับ Render เนื่องจากมีความเข้ากันได้ดีกับ Library หลายตัว
+python_version == "3.11.*"
+
+# WSGI Server
+gunicorn==22.0.0
+
+# Web Framework (เลือกใช้แค่ตัวเดียวที่คุณใช้)
+Flask==3.0.3       # ถ้าคุณใช้ Flask
+# Django==5.0.6    # ถ้าคุณใช้ Django (คอมเมนต์ Flask ออก)
+
+# Database Driver (เลือกตามที่คุณใช้)
+# psycopg2-binary==2.9.9 # ถ้าใช้ PostgreSQL
+# PyMySQL==1.1.0       # ถ้าใช้ MySQL/MariaDB
+# SQLAlchemy==2.0.30     # ถ้าใช้ SQLAlchemy (ไม่ว่าจะเป็นกับ Flask-SQLAlchemy หรือ standalone)
+# Flask-SQLAlchemy==3.1.1 # ถ้าคุณใช้ Flask-SQLAlchemy (ต้องมี SQLAlchemy ด้านบนด้วย)
+
+# Core Scientific Libraries (เวอร์ชันที่เข้ากันได้ดีกับ Python 3.11 และ Torch ล่าสุด)
+numpy==1.26.4
+scipy==1.13.0
+numba==0.60.0 # numba 0.60.0 รองรับ numpy 1.22+ แต่ไม่เกิน 2.1
+# เนื่องจาก numpy==1.26.4 เป็นเวอร์ชัน 1.26.x ซึ่งเกิน 2.1
+# อาจต้องบังคับ numba ให้ใช้เวอร์ชันที่ใหม่กว่า 0.60.0 ที่รองรับ numpy 1.26.4
+# หรือยอมรับว่า numba อาจจะไม่ได้ถูกใช้ในส่วนที่ต้องการ numpy 2.x
+# หรือใช้ numba เวอร์ชันที่ใหม่กว่าที่รองรับ numpy 2.x+
+# เช่น numba==0.59.1 (ถ้ามี) หรือ numba==0.58.1
+
+# ดังนั้น: ถ้าโค้ดของคุณพึ่งพา Numba และ Numpy 2.x มาก ให้ลองใช้ numba=0.59.1 หรือ 0.58.1
+# มิฉะนั้น ให้คง numba==0.60.0 ไว้ แต่อาจมีคำเตือน
+# หรืออัปเดต numba เป็นเวอร์ชันที่ใหม่กว่า 0.60.0 (ถ้ามีและเข้ากันได้)
+
+# PyTorch (เวอร์ชัน CPU-only ที่คาดว่าจะหา distribution ได้บน Render)
+# ลบ +cpu ออกเพื่อให้ pip หา wheel ที่เข้ากันได้กับสภาพแวดล้อมโดยอัตโนมัติ
+torch==2.3.1 # แนะนำเวอร์ชันนี้ เพราะค่อนข้างใหม่และมี wheel สำหรับ CPU ที่กว้างขวางกว่า
+torchvision==0.18.1 # ถ้าใช้
+torchaudio==2.3.1   # ถ้าใช้
+
+# Library อื่นๆ ที่คุณอาจใช้ (เพิ่มเข้ามาเอง)
+# pandas==2.2.2
+# matplotlib==3.9.0
+# scikit-learn==1.4.2
+# opencv-python==4.9.0.80
+# Pillow==10.3.0
+# pymatting==1.1.13 # หากโปรเจกต์คุณใช้ pymatting จริงๆ และยอมรับ conflict กับ numba 0.60.0
+                   # หรือถ้า numba ถูกอัปเกรดเป็นเวอร์ชันที่รองรับ numpy 2.x
+                   # ควรตรวจสอบ pymatting ว่ารองรับ torch/numpy เวอร์ชันเหล่านี้หรือไม่
+
+# ส่วนเพิ่มเติมที่คุณต้องมีใน requirements.txt
+# (ถ้าใช้ตามที่เคยเจอในโค้ดของคุณ)
+# Flask-WTF==1.2.1
+# WTForms==3.1.2
+# email_validator==2.1.1
+# python-dotenv==1.0.1
+# Werkzeug==3.0.3
+# itsdangerous==2.2.0
+# click==8.1.7
+# Jinja2==3.1.4
+# MarkupSafe==2.1.5
+
+# ตัวอย่าง Library ที่คุณอาจใช้ (ถ้ามี)
+# หากใช้ Flask-Login
+# Flask-Login==0.6.3
+# หากใช้ Flask-Migrate
+# Flask-Migrate==4.0.5
+# หากใช้ Flask-Bcrypt
+# Flask-Bcrypt==1.0.1
+# Flask-Mail
+# Flask-Mail==0.9.1

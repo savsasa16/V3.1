@@ -990,5 +990,5 @@ def import_wheels_action():
         return redirect(url_for('export_import', tab='wheels_excel'))
 
 if __name__ == '__main__':
-    setup_database()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000)) # บรรทัดนี้สำคัญมาก
+    app.run(host='0.0.0.0', port=port, debug=True)

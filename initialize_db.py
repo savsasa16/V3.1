@@ -13,9 +13,14 @@ def run_db_setup():
     print("Starting database initialization...")
     conn = None
     try:
+        # Determine the database file path from environment variable or default to persistent disk path
+        db_path = os.environ.get('DATABASE_PATH', '/var/data/inventory.db') 
+        # Ensure the directory for the database file exists
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+
         # Get connection using your database.py function
         conn = database.get_db_connection() 
-        # Call your init_db function
+        # Call your init_db function from database.py
         database.init_db(conn) 
         print("Database initialization complete.")
     except Exception as e:
@@ -26,5 +31,5 @@ def run_db_setup():
             conn.close()
 
 if __name__ == '__main__':
-    with app.app_context(): # Ensure Flask application context for functions that might need it
+    with app.app_context(): # Essential for Flask context-dependent functions
         run_db_setup()

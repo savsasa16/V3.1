@@ -1,6 +1,18 @@
 import sqlite3
 from datetime import datetime
 import pytz
+import os
+
+def get_db_connection():
+    # Connect to the database file within the persistent disk's mount path
+    db_path = os.environ.get('DATABASE_PATH', '/var/data/inventory.db') 
+
+    # Ensure the directory exists before connecting
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def get_bkk_time():
     bkk_tz = pytz.timezone('Asia/Bangkok')
